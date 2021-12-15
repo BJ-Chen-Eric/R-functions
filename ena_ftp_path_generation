@@ -1,0 +1,15 @@
+ena_path_generation <- function(prefix_first3, prefix_first6, first_data_accession_number, last_data_accession_number, path=getwd(), sepration='\n')
+{
+  for(i in 1:2)
+  {
+    A <- as.data.frame(matrix(data = 0, nrow = (last_data_accession_number-first_data_accession_number+1), ncol = 3))
+    A[,1] <- paste('00', (seq(first_data_accession_number%%100000, (last_data_accession_number%%100000)))%%10, sep = '')
+    A[,2] <- paste('/',prefix_first3 ,seq(first_data_accession_number, last_data_accession_number,1), sep = '')
+    A[,3] <- paste('/',prefix_first3 ,seq(first_data_accession_number, last_data_accession_number,1), '_', i,'.fastq.gz',sep = '')
+    C <- paste('http://ftp.sra.ebi.ac.uk/vol1/fastq/', prefix_first6, '/', A[,1],A[,2],A[,3], sep = '')
+    write.table(C, file = paste(path, '/', prefix_first6, '_', i,'.txt', sep = ''), quote = F, sep = sepration, row.names = F, col.names = F)
+  }
+}
+
+example
+ena_path_generation(prefix_first3 = 'ERR', prefix_first6 = 'ERR139', first_data_accession_number = 1391550, last_data_accession_number = 1391709, path = '~/R')
