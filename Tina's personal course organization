@@ -1,4 +1,4 @@
-# Limitation: course and personal information have to be single sheet
+# Limitation: course and personal information have to be "single sheet .xlsx file"
 
 ### Function script
 read.course_and_person <- function(course_path, personal_path)
