@@ -8,8 +8,6 @@ read.course_and_person <- function(course_path, personal_path)
   colnames(course) <- c('index', 'course', 'hours', 'group')
   person <- readxl::read_xlsx(path = personal_path)
   colnames(person) <- c('course', 'phase', 'learning_agent', 'period', 'hours')
-  rownames(person) <- seq(1, nrow(person))
-  person$index <- seq(1, nrow(person))
   A <- list(course, person)
   names(A) <- c('course', 'person')
   list2env(A,globalenv())
@@ -24,11 +22,13 @@ personnal_cource <- function(write.csv.path)
     specific_course <- course[course$group %in% A[i,1],]
     C <- person_course[[i]]
     C <- person[person$course %in% specific_course$course,]
-    index <- person$index[person$course %in% specific_course$course]
     if(nrow(C)>0)
     {C$class <- A[i,1]}
-    if(length(index) > 0)
-    {person <- person[-c(index),]}
+    if(nrow(C) > 0)
+    {
+      diff_course <- setdiff(person$course ,C$course)
+      person <- person[person$course %in% diff_course,]
+    }
     person_course[[i]] <- C
     names(person_course)[[i]] <- A[i,1]
   }
@@ -56,18 +56,19 @@ personnal_cource_onstep <- function(course_path, personal_path,write.csv.path)
     specific_course <- course[course$group %in% A[i,1],]
     C <- person_course[[i]]
     C <- person[person$course %in% specific_course$course,]
-    index <- person$index[person$course %in% specific_course$course]
     if(nrow(C)>0)
     {C$class <- A[i,1]}
-    if(length(index) > 0)
-    {person <- person[-c(index),]}
+    if(nrow(C) > 0)
+    {
+      diff_course <- setdiff(person$course ,C$course)
+      person <- person[person$course %in% diff_course,]
+    }
     person_course[[i]] <- C
     names(person_course)[[i]] <- A[i,1]
   }
   
   library(plyr)
   person <- ldply(person_course, rbind)
-  person <- person[,-c(1,6)]
   write.csv(x = person, file = write.csv.path)
   
 }
@@ -82,4 +83,4 @@ read.course_and_person(course_path = 'all_course.xlsx', personal_path = '個人�
 personnal_cource('test.csv')
 
 # One step
-personnal_cource_onstep(course_path = 'all_course.xlsx', personal_path = '個人學習時數1101207-張金鏘.xlsx','test.csv')
+personnal_cource_onstep(course_path = 'C:/U', personal_path = '個人學習時數1101207-張金鏘.xlsx','test.csv')
